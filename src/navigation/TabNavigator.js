@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import the icon library
 
 import Home from '../screens/Frontend/Home';
-// import Profile from '../screens/Frontend/Profile';
+import CreateEvent from '../screens/Frontend/CreateEvent';
 // import Notification from '../screens/Frontend/Notification';
 // import CreatePost from '../screens/Frontend/CreatePost';
 // import Friends from '../screens/Frontend/Friends';
@@ -22,8 +22,8 @@ export default function TabNavigator() {
           // Assign icons based on the route name
           if (route.name === 'Home') {
             iconName = focused ? 'home-outline' : 'home-outline';
-          } else if (route.name === 'Friends') {
-            iconName = focused ? 'people' : 'people-outline';
+          } else if (route.name === 'CreateEvent') {
+            iconName = focused ? 'create' : 'create-outline';
           } else if (route.name === 'Post') {
             iconName = focused ? 'create' : 'create-outline';
           } else if (route.name === 'Notification') {
@@ -40,8 +40,8 @@ export default function TabNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      {/* <Tab.Screen name="Friends" component={Friends} />
-      <Tab.Screen name="Post" component={CreatePost} />
+      <Tab.Screen name="CreateEvent" component={CreateEvent} />
+      {/* <Tab.Screen name="Post" component={CreatePost} />
       <Tab.Screen name="Notification" component={Notification} />
       <Tab.Screen name="Profile" component={Profile} /> */}
     </Tab.Navigator>
