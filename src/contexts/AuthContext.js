@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useEffect, useReducer, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {API_URL} from "@env"
 
 export const AuthContext = createContext();
 
@@ -34,6 +35,7 @@ export default function AuthContextProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -45,7 +47,7 @@ export default function AuthContextProvider(props) {
           return;
         }
         const {data} = await axios.get(
-          'http://192.168.1.9:8000/users/me',
+          `${API_URL}/users/me`,
           {
             headers: {
               Authorization: token,

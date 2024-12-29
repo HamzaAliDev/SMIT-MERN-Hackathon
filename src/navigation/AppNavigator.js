@@ -15,7 +15,7 @@ export default function AppNavigator() {
     <AppStack.Screen name='Tab' component={TabNavigator} options={{ headerShown: false }} />
     <AppStack.Screen name='EventDetail' component={EventDetail} />
     <AppStack.Screen name='EditProfile' component={EditProfile} options={{ headerShown: false }} />
-    <AppStack.Screen name='Participations' component={Participations} options={{ headerShown: false }} />
+    <AppStack.Screen name='Participations' component={Participations}  />
     <AppStack.Screen name='UserEvents' component={UserEvents} options={{ headerShown: false }} />
 
 

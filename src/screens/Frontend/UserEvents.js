@@ -1,48 +1,68 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { useEventsContext } from '../../contexts/EventContext';
+import { useAuth } from '../../contexts/AuthContext';
+import axios from 'axios';
+import { API_URL } from '@env';
 
 const UserEvents = ({ navigation }) => {
-    // Filter the events where the user has RSVP'd
-    const participations = [
-        {
-            id: '1',
-            title: 'Music Festival',
-            date: '2024-12-25',
-            category: 'Music',
-            location: 'Los Angeles, CA',
-            rsvp: true,
-        },
-        {
-            id: '2',
-            title: 'Music Festival',
-            date: '2024-12-25',
-            category: 'Music',
-            location: 'Los Angeles, CA',
-            rsvp: true,
-        },
-        {
-            id: '3',
-            title: 'Music Festival',
-            date: '2024-12-25',
-            category: 'Music',
-            location: 'Los Angeles, CA',
-            rsvp: true,
-        },
+    const { events, dispatch } = useEventsContext();
+    const { user } = useAuth();
+    const { _id } = user
+    const participations = events.filter(event => event.createdBy === _id) || [];
 
-    ]
+    // Function to handle event deletion
+    const handleDeleteEvent = async (eventId) => {
+        try {
+            // Show confirmation dialog before deleting
+            Alert.alert(
+                'Delete Event',
+                'Are you sure you want to delete this event?',
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Delete',
+                        onPress: async () => {
+                            // Delete event locally
+                            const updatedEvents = events.filter(event => event._id !== eventId);
+                            dispatch({ type: 'SET_EVENTS', payload: updatedEvents });
+
+                            // Delete event on the backend
+                            await axios.delete(`${API_URL}/events/delete/${eventId}`);
+
+                            Alert.alert('Success', 'Event has been deleted');
+                        },
+                    },
+                ]
+            );
+        } catch (err) {
+            console.error('Error deleting event:', err);
+            Alert.alert('Error', 'An error occurred while deleting the event');
+        }
+    };
 
     const renderEventCard = ({ item }) => (
-        <TouchableOpacity
-            style={styles.eventCard}
-            onPress={() => navigation.navigate('EventDetail', { event: item })}
-        >
-            <View style={styles.eventInfo}>
+        <View style={styles.eventCard}>
+            <TouchableOpacity
+                style={styles.eventInfo}
+                onPress={() => navigation.navigate('EventDetail', { event: item })}
+            >
                 <Text style={styles.eventTitle}>{item.title}</Text>
                 <Text style={styles.eventDetails}>📅 {item.date}</Text>
-                <Text style={styles.eventDetails}>📍 {item.location}</Text>
+                <Text style={styles.eventDetails}>📍 {item.address}</Text>
                 <Text style={styles.eventDetails}>🏷️ {item.category}</Text>
-            </View>
-        </TouchableOpacity>
+                <Text style={styles.eventDetails}>👥 Participants: {item.participants.length}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDeleteEvent(item._id)}
+            >
+                <Text style={styles.deleteButtonText}>Delete</Text>
+            </TouchableOpacity>
+        </View>
     );
 
     return (
@@ -51,7 +71,7 @@ const UserEvents = ({ navigation }) => {
             <FlatList
                 data={participations}
                 renderItem={renderEventCard}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item._id}
             />
         </View>
     );
@@ -99,6 +119,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#666',
         marginTop: 5,
+    },
+    deleteButton: {
+        backgroundColor: '#e63946',
+        borderRadius: 5,
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    deleteButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
     },
 });
 

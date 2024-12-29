@@ -1,69 +1,17 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useEventsContext } from '../../contexts/EventContext';
+import { useAuth } from '../../contexts/AuthContext';
+import axios from 'axios';
+import { API_URL } from '@env';
 
 const Home = ({ navigation }) => {
-  // const {events} = useEventsContext();
-  const [events, setEvents] = useState([
-    {
-      id: '1',
-      title: 'Tech Conference 2024',
-      date: '2024-12-30',
-      category: 'Tech',
-      description: 'here is the description of my event',
-      location: 'San Francisco, CA',
-      rsvp: false,
-    },
-    {
-      id: '2',
-      title: 'Music Festival',
-      date: '2024-12-25',
-      category: 'Music',
-      location: 'Los Angeles, CA',
-      rsvp: true,
-    },
-    {
-      id: '3',
-      title: 'Sports Meetup',
-      date: '2024-12-15',
-      category: 'Sports',
-      location: 'New York, NY',
-      rsvp: false,
-    },
-    {
-      id: '4',
-      title: 'Sports Meetup',
-      date: '2024-12-15',
-      category: 'Sports',
-      location: 'New York, NY',
-      rsvp: false,
-    },
-    {
-      id: '5',
-      title: 'Sports Meetup',
-      date: '2024-12-15',
-      category: 'Sports',
-      location: 'New York, NY',
-      rsvp: false,
-    },
-    {
-      id: '6',
-      title: 'Sports Meetup',
-      date: '2024-12-15',
-      category: 'Sports',
-      location: 'New York, NY',
-      rsvp: false,
-    },
-    {
-      id: '7',
-      title: 'Sports Meetup',
-      date: '2024-12-15',
-      category: 'Sports',
-      location: 'New York, NY',
-      rsvp: false,
-    },
-  ]);
+  const { events, dispatch } = useEventsContext();
+  const { user } = useAuth()
+  // console.log("events", events)
+  // console.log("user", user)
 
+  const { _id } = user
   const [filter, setFilter] = useState('upcoming'); // 'upcoming' or 'past'
 
   // Function to filter events based on date
@@ -77,13 +25,34 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const handleRSVP = (id) => {
-    setEvents((prevEvents) =>
-      prevEvents.map((event) =>
-        event.id === id ? { ...event, rsvp: !event.rsvp } : event
-      )
+  // Modify the handleRSVP function to update the backend
+const handleRSVP = async (eventId) => {
+  try {
+    // Update the participants list locally
+    const updatedEvent = events.map((event) =>
+      event._id === eventId
+        ? {
+            ...event,
+            participants: event.participants.includes(_id)
+              ? event.participants.filter((userId) => userId !== _id) // Remove user ID
+              : [...event.participants, _id], // Add user ID
+          }
+        : event
     );
-  };
+
+    // Dispatch updated event list to update state
+    dispatch({ type: 'SET_EVENTS', payload: updatedEvent });
+
+    // Send the updated participants to the backend
+    await axios.put(`${API_URL}/events/update/${eventId}`, {
+      participants: updatedEvent.find((event) => event._id === eventId).participants,
+    });
+
+  } catch (err) {
+    console.error("Error updating RSVP:", err);
+  }
+};
+
 
   const renderEventCard = ({ item }) => (
     <TouchableOpacity
@@ -93,15 +62,19 @@ const Home = ({ navigation }) => {
       <View style={styles.eventInfo}>
         <Text style={styles.eventTitle}>{item.title}</Text>
         <Text style={styles.eventDetails}>📅 {item.date}</Text>
-        <Text style={styles.eventDetails}>📍 {item.location}</Text>
+        <Text style={styles.eventDetails}>📍 {item.address}</Text>
         <Text style={styles.eventDetails}>🏷️ {item.category}</Text>
+        <Text style={styles.eventDetails}>👥 Participants: {item.participants.length}</Text>
       </View>
       <TouchableOpacity
-        style={[styles.rsvpButton, item.rsvp && styles.rsvpButtonActive]}
-        onPress={() => handleRSVP(item.id)}
+        style={[
+          styles.rsvpButton,
+          item.participants.includes(_id) && styles.rsvpButtonActive,
+        ]}
+        onPress={() => handleRSVP(item._id)}
       >
         <Text style={styles.rsvpButtonText}>
-          {item.rsvp ? 'Cancel RSVP' : 'RSVP'}
+          {item.participants.includes(_id) ? 'Cancel RSVP' : 'RSVP'}
         </Text>
       </TouchableOpacity>
     </TouchableOpacity>
@@ -111,7 +84,7 @@ const Home = ({ navigation }) => {
     <FlatList
       data={filterEvents()}
       renderItem={renderEventCard}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item._id} // Use _id as the key
       ListHeaderComponent={
         <View style={styles.headerContainer}>
           <Text style={styles.header}>Events</Text>
@@ -162,7 +135,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   header: {
-    paddingStart : 8,
+    paddingStart: 8,
     paddingTop: 5,
     fontSize: 26,
     paddingBottom: 10,

@@ -2,24 +2,25 @@ import React, { useState } from 'react'
 import axios from 'axios';
 import { Alert, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useAuth } from '../../contexts/AuthContext';
+import { API_URL } from '@env';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
 const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 export default function Register() {
-    const {setIsLoading} = useAuth();
+    const { setIsLoading } = useAuth();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
 
-    const handleSubmit = async() => {
+
+    const handleSubmit = async () => {
 
         let getName = name.trim()
         let getEmail = email.trim()
 
-        if(getName === '' || getEmail === '' || password === '') return Alert.alert("All fields must required")
-        if(getName.length < 3) return Alert.alert("Invalid Name")
-        if(password.length < 6) return Alert.alert("Password must be greater than 6 chars")
+        if (getName === '' || getEmail === '' || password === '') return Alert.alert("All fields must required")
+        if (getName.length < 3) return Alert.alert("Invalid Name")
+        if (password.length < 6) return Alert.alert("Password must be greater than 6 chars")
         if (!reg.test(getEmail)) return Alert.alert('Email is Invalid')
 
         let user = {
@@ -28,20 +29,20 @@ export default function Register() {
             password: password
         }
         console.log("user", user)
-        
+
         try {
             setIsLoading(true)
-            const {data } = await axios.post('http://172.16.50.26:8000/users/register',user)
+            const { data } = await axios.post(`${API_URL}/users/register`, user)
             console.log("object")
-            console.log("data",data.data)
-            
+            console.log("data", data.data)
+
         } catch (error) {
-            console.error("error",error.response.data.message)
+            console.error("error", error.response.data.message)
         }
         setIsLoading(false);
-       setName('')
-       setEmail('')
-       setPassword('')
+        setName('')
+        setEmail('')
+        setPassword('')
     };
     return (
         <>

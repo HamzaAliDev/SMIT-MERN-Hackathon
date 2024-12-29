@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
+import { API_URL } from '@env';
 
 
 const EventContext = createContext();
@@ -39,9 +40,9 @@ export default function EventContextsProvider(props) {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const fetchEvents = async () => {
-        console.log('fetching events')
+        // console.log('fetching events')
         try {
-            const { data } = await axios.get('https://172.16.50.26:8000/events');
+            const { data } = await axios.get(`${API_URL}/events`);
             // console.log(data.data)
             dispatch({ type: 'SET_EVENTS', payload: data.data })
         }
@@ -51,8 +52,15 @@ export default function EventContextsProvider(props) {
     }
 
     useEffect(() => {
-        fetchEvents()
-    }, [])
+        // Polling: Fetch events every 5 seconds
+        const interval = setInterval(() => {
+            fetchEvents();
+        }, 10000); // 5000ms = 5 seconds
+    
+        // Cleanup interval on component unmount
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <EventContext.Provider value={{ ...state, dispatch }}>
             {props.children}

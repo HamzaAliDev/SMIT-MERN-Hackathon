@@ -3,17 +3,18 @@ import axios from 'axios';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../../contexts/AuthContext';
+import { API_URL } from '@env';
 
 export default function Login({ navigation }) {
-    const {dispatch} = useAuth();
+    const { dispatch } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         let getEmail = email.trim()
         let getPassword = password
 
-        console.log("email",getEmail)
+        console.log("email", getEmail)
         console.log("password", getPassword)
 
         if (getEmail === '' || getPassword === '') return Alert.alert("All fields must required")
@@ -25,18 +26,18 @@ export default function Login({ navigation }) {
         }
 
         console.log("user", currentUser)
-        try{
-            
-            const {data} = await axios.post('http://172.16.50.26:8000/users/login', currentUser )
+        try {
+
+            const { data } = await axios.post(`${API_URL}/users/login`, currentUser)
             console.log("data", data)
-            const {token} = data.data
-            const {user} = data.data
-            axios.defaults.headers.common['Authorization'] = token;
+            const { token } = data.data
+            const { user } = data.data
+            axios.defaults.headers.common['Authorization'] = token;
             await AsyncStorage.setItem("token", token)
-            dispatch({type: "SET_USER", payload: user})
-            
-        }catch(error){
-            console.log("err",error)
+            dispatch({ type: "SET_USER", payload: user })
+
+        } catch (error) {
+            console.log("err", error)
             console.log("error", error.response.data.message)
         }
         setEmail('')

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
+import { API_URL } from '@env';
 
 const CreateEvent = ({ navigation }) => {
     const [title, setTitle] = useState('');
@@ -34,14 +35,11 @@ const CreateEvent = ({ navigation }) => {
             // If no errors, handle the event creation
             console.log('Event Created:', { title, description, date, location, category, type });
 
-            let currentEvent = { title, description, date, address: location, category, eventType: type }
+            let currentEvent = { title, description, date, address: location, category, visibility: type }
             console.log("currentEvent", currentEvent)
             try {
-                const { data } = await axios.post('http://172.16.50.26:8000/events/create', currentEvent)
+                const { data } = await axios.post(`${API_URL}/events/create`, currentEvent)
                 console.log("data", data)
-                // const response = await axios.post('http://172.16.50.26:8000/events/create', { test: "data" });
-                // console.log(response.data);
-
 
             } catch (error) {
                 console.error("Full error:", error);
