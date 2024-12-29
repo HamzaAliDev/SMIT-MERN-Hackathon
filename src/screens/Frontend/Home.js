@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { useEventsContext } from '../../contexts/EventContext';
 
 const Home = ({ navigation }) => {
+  // const {events} = useEventsContext();
   const [events, setEvents] = useState([
     {
       id: '1',

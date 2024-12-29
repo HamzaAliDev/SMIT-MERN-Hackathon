@@ -1,13 +1,47 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import axios from 'axios';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Login({ navigation }) {
+    const {dispatch} = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = () => {
-        console.log('Email:', email);
-        console.log('Password:', password);
+    const handleSubmit = async() => {
+        let getEmail = email.trim()
+        let getPassword = password
+
+        console.log("email",getEmail)
+        console.log("password", getPassword)
+
+        if (getEmail === '' || getPassword === '') return Alert.alert("All fields must required")
+        if (getPassword.length < 6) return Alert.alert("Password must be greater than 6 chars")
+
+        let currentUser = {
+            email: getEmail,
+            password: getPassword
+        }
+
+        console.log("user", currentUser)
+        try{
+            
+            const {data} = await axios.post('http://172.16.50.26:8000/users/login', currentUser )
+            console.log("data", data)
+            const {token} = data.data
+            const {user} = data.data
+            axios.defaults.headers.common['Authorization'] = token;
+            await AsyncStorage.setItem("token", token)
+            dispatch({type: "SET_USER", payload: user})
+            
+        }catch(error){
+            console.log("err",error)
+            console.log("error", error.response.data.message)
+        }
+        setEmail('')
+        setPassword('')
+
     };
     return (
         <>
@@ -85,7 +119,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 10,
-        backgroundColor: '#ac1e5f', // Set background color here
+        backgroundColor: '#14213d', // Set background color here
         paddingVertical: 10,
         paddingHorizontal: 30,
         borderRadius: 25,
@@ -98,7 +132,7 @@ const styles = StyleSheet.create({
     },
     createButton: {
         marginTop: 10,
-        backgroundColor: '#ac1e5f', // Set background color here
+        backgroundColor: '#fca311', // Set background color here
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,

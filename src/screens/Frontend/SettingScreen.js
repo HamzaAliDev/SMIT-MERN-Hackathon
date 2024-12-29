@@ -3,9 +3,11 @@ import { SafeAreaView, ScrollView, View, Text, Image, TouchableOpacity, StyleShe
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function SettingScreen() {
   const navigation = useNavigation();
+  const {dispatch} = useAuth();
 
   // Sample user data (Replace with actual data)
   const user = {
@@ -37,7 +39,7 @@ export default function SettingScreen() {
       onPress: async () => {
         await AsyncStorage.removeItem('token');
         // You can dispatch logout action here if using a context
-        // dispatch({ type: 'LOGOUT' }); 
+        dispatch({ type: 'LOGOUT' }); 
       },
     },
   ];

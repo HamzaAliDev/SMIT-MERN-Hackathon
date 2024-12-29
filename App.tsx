@@ -1,20 +1,19 @@
 import React from 'react';
-import Home from './src/screens/Frontend/Home';
-import Login from './src/screens/Auth/Login';
-import Register from './src/screens/Auth/Register';
+import { useAuth } from './src/contexts/AuthContext';
 import MainNavigator from './src/navigation/MainNavigator';
+import Loader from './src/components/Loader';
 
 
 function App(): React.JSX.Element {
-  
+  const {isLoading} = useAuth();
+  if (isLoading) {
+    return (
+      <Loader />
+    );
+  }
 
   return (
-    <>
-    {/* <Home /> */}
-    {/* <Login /> */}
-    {/* <Register /> */}
     <MainNavigator />
-    </>
   );
 }
 

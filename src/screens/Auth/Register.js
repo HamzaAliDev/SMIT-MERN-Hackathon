@@ -1,16 +1,47 @@
 import React, { useState } from 'react'
-import { Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import axios from 'axios';
+import { Alert, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { useAuth } from '../../contexts/AuthContext';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
+const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 export default function Register() {
+    const {setIsLoading} = useAuth();
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
 
-        console.log('Email:', email);
-        console.log('Password:', password);
+        let getName = name.trim()
+        let getEmail = email.trim()
+
+        if(getName === '' || getEmail === '' || password === '') return Alert.alert("All fields must required")
+        if(getName.length < 3) return Alert.alert("Invalid Name")
+        if(password.length < 6) return Alert.alert("Password must be greater than 6 chars")
+        if (!reg.test(getEmail)) return Alert.alert('Email is Invalid')
+
+        let user = {
+            name: getName,
+            email: getEmail,
+            password: password
+        }
+        console.log("user", user)
+        
+        try {
+            setIsLoading(true)
+            const {data } = await axios.post('http://172.16.50.26:8000/users/register',user)
+            console.log("object")
+            console.log("data",data.data)
+            
+        } catch (error) {
+            console.error("error",error.response.data.message)
+        }
+        setIsLoading(false);
+       setName('')
+       setEmail('')
+       setPassword('')
     };
     return (
         <>
@@ -24,8 +55,8 @@ export default function Register() {
                     <TextInput
                         style={styles.input}
                         placeholder="Full Name"
-                        value={email}
-                        onChangeText={setEmail}
+                        value={name}
+                        onChangeText={setName}
                         keyboardType="ascii-capable"
                     />
 
@@ -93,7 +124,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 10,
-        backgroundColor: '#ac1e5f',
+        backgroundColor: '#14213d',
         paddingVertical: 10,
         paddingHorizontal: 30,
         borderRadius: 25,

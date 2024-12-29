@@ -27,7 +27,7 @@ const reducer = (state, {type, payload}) => {
 };
 
 const initialState = {
-  user: '',
+  user: null,
 };
 
 export default function AuthContextProvider(props) {
@@ -39,13 +39,13 @@ export default function AuthContextProvider(props) {
       try {
         setIsLoading(true);
         const token = await AsyncStorage.getItem('token');
-        console.log(token);
+        console.log("token of current User:", token);
         if (!token) {
           setIsLoading(false);
           return;
         }
         const {data} = await axios.get(
-          'https://hackathon-backened-production.up.railway.app/users/me',
+          'http://192.168.1.9:8000/users/me',
           {
             headers: {
               Authorization: token,
@@ -65,7 +65,7 @@ export default function AuthContextProvider(props) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{...state, dispatch, isLoading}}>
+    <AuthContext.Provider value={{...state, dispatch, isLoading, setIsLoading}}>
       {props.children}
     </AuthContext.Provider>
   );

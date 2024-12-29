@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import axios from 'axios';
 
 const CreateEvent = ({ navigation }) => {
     const [title, setTitle] = useState('');
@@ -13,7 +14,7 @@ const CreateEvent = ({ navigation }) => {
     const [errors, setErrors] = useState({});
 
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         // Clear previous errors
         setErrors({});
 
@@ -32,8 +33,35 @@ const CreateEvent = ({ navigation }) => {
         } else {
             // If no errors, handle the event creation
             console.log('Event Created:', { title, description, date, location, category, type });
+
+            let currentEvent = { title, description, date, address: location, category, eventType: type }
+            console.log("currentEvent", currentEvent)
+            try {
+                const { data } = await axios.post('http://172.16.50.26:8000/events/create', currentEvent)
+                console.log("data", data)
+                // const response = await axios.post('http://172.16.50.26:8000/events/create', { test: "data" });
+                // console.log(response.data);
+
+
+            } catch (error) {
+                console.error("Full error:", error);
+                if (error.response) {
+                    console.error("Error response data:", error.response.data);
+                    console.error("Error response status:", error.response.status);
+                    console.error("Error response headers:", error.response.headers);
+                } else {
+                    console.error("Error message:", error.message);
+                }
+            }
             // Navigate back after submitting
             navigation.goBack();
+            setTitle('')
+            setDescription('')
+            setDate('')
+            setType('')
+            setLocation('')
+            setCategory('')
+
         }
     };
 

@@ -4,13 +4,14 @@ import React from 'react'
 import AuthNavigator from './AuthNavigator'
 // import TabNavigator from './TabNavigator';
 import AppNavigator from './AppNavigator';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function MainNavigator() {
-    const isAuthenticated = true;
+    const {user} = useAuth();
 
   return (
    <NavigationContainer>
-    {isAuthenticated ?  <AppNavigator />: <AuthNavigator />}
+    {user ?  <AppNavigator />: <AuthNavigator />}
    </NavigationContainer>
   )
 }
