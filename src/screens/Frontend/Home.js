@@ -8,6 +8,7 @@ const Home = ({ navigation }) => {
       title: 'Tech Conference 2024',
       date: '2024-12-30',
       category: 'Tech',
+      description: 'here is the description of my event',
       location: 'San Francisco, CA',
       rsvp: false,
     },
@@ -117,7 +118,7 @@ const Home = ({ navigation }) => {
               style={[styles.filterButton, filter === 'upcoming' && styles.filterButtonActive]}
               onPress={() => setFilter('upcoming')}
             >
-              <Text style={styles.filterButtonText}>Upcoming Events</Text>
+              <Text style={styles.filterButtonText}>Upcoming </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.filterButton, filter === 'past' && styles.filterButtonActive]}
@@ -144,26 +145,30 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   filterButton: {
-    backgroundColor: '#007bff',
+    width: "40%",
+    backgroundColor: '#14213d',
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 15,
     alignItems: 'center',
   },
   filterButtonActive: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#fca311',
   },
   filterButtonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
   header: {
-    fontSize: 24,
+    paddingStart : 8,
+    paddingTop: 5,
+    fontSize: 26,
     paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'grey',
     fontWeight: 'bold',
     marginBottom: 10,
+    color: "#14213d",
     // textAlign: 'center',
   },
   eventCard: {
@@ -193,13 +198,13 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   rsvpButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#14213d',
     borderRadius: 5,
     padding: 10,
     alignItems: 'center',
   },
   rsvpButtonActive: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#fca311',
   },
   rsvpButtonText: {
     color: '#ffffff',

@@ -4,9 +4,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import the icon li
 
 import Home from '../screens/Frontend/Home';
 import CreateEvent from '../screens/Frontend/CreateEvent';
-// import Notification from '../screens/Frontend/Notification';
-// import CreatePost from '../screens/Frontend/CreatePost';
-// import Friends from '../screens/Frontend/Friends';
+import SettingScreen from '../screens/Frontend/SettingScreen';
+import Participations from '../screens/Frontend/Participations';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,26 +23,26 @@ export default function TabNavigator() {
             iconName = focused ? 'home-outline' : 'home-outline';
           } else if (route.name === 'CreateEvent') {
             iconName = focused ? 'create' : 'create-outline';
-          } else if (route.name === 'Post') {
-            iconName = focused ? 'create' : 'create-outline';
-          } else if (route.name === 'Notification') {
-            iconName = focused ? 'notifications' : 'notifications-outline';
-          } else if (route.name === 'Profile') {
+          } else if (route.name === 'Participations') {
+            iconName = focused ? 'calendar' : 'calendar-outline';
+          } else if (route.name === 'SettingScreen') {
+            iconName = focused ? 'settings' : 'settings-outline';
+          } else if (route.name === 'UserProfile') {
             iconName = focused ? 'person' : 'person-outline';
           }
 
           // Return the icon component
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#ac1e5f', // Active tab color
+        tabBarActiveTintColor: '#fca311', // Active tab color
         tabBarInactiveTintColor: 'black', // Inactive tab color
       })}
     >
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="CreateEvent" component={CreateEvent} />
-      {/* <Tab.Screen name="Post" component={CreatePost} />
-      <Tab.Screen name="Notification" component={Notification} />
-      <Tab.Screen name="Profile" component={Profile} /> */}
+      <Tab.Screen name="Participations" component={Participations} /> 
+      <Tab.Screen name="SettingScreen" component={SettingScreen} /> 
+      {/* <Tab.Screen name="UserProfile" component={UserProfile} /> */}
     </Tab.Navigator>
   );
 }
